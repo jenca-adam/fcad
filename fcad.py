@@ -31,3 +31,5 @@ class Hasher:
     def _printhvals(self):
         return(self._hashdict.values())
     def savetokeyfile(self,keyfile): 
+    # poznamka
+
