@@ -1,4 +1,4 @@
-import pickle,sys,random
+import os,sys,random
 maxchr=999
 class FCaDError(TypeError):pass
 class Hasher:
@@ -47,4 +47,15 @@ class Hasher:
             self.file=open(self.file_to_code)
             del self.g
 
+        def decode(string, dicti):
+            srt=""
+            for i in string:
+                srt+=dicti[i]
+            return(srt)
+        self.coded=(decode(self.file.read(),self._hashdict))
+        self.file=open(self.file_to_code,'w')
+        self.file.write(self.coded)
+        self.keyfile=os.path.splitext(self.file_to_code)[0]+".fcadk"
 
+
+            
