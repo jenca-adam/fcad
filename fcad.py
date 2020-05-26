@@ -4,7 +4,7 @@ class FCaDError(TypeError):pass
 class Hasher:
 
     def __init__(self, strenght):
-        self.strenght=strenght
+        self.strenght=strenght+1
         self._hashdict={}
     def __getitem__(self,key):
         if key in self._hashdict.keys():
@@ -21,6 +21,7 @@ class Hasher:
         startstrs=[]
         strng=""
         for e in range(maxchr):
+            strng=""
             for a in range(stren):
             
                 strng+=random.choice(list((chr(i) for i in range(maxchr))))
