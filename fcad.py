@@ -30,6 +30,11 @@ class Hasher:
         return(self._hashdict)
     def _printhvals(self):
         return(self._hashdict.values())
-    def savetokeyfile(self,keyfile): 
-    # poznamka
+    def codefile(self, file_to_code):
+        self.file_to_code=file_to_code
+        try:
+            self.file=open(self.file_to_code)
+        except FileNotFoundError:
+            raise FCaDError("No such file or directory:{}".format(self.file_to_code))
+
 
