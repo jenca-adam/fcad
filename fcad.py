@@ -33,14 +33,15 @@ class Hasher:
         return(self._hashdict.values())
     def codefile(self, file_to_code):
         self.file_to_code=file_to_code
+        os.chdir(os.path.abspath(os.path.join(os.curdir,os.pardir)))
         try:
             self.file=open(self.file_to_code)
         except FileNotFoundError:
 
             self.g=open(self.file_to_code,'w') 
-            sys.stdout.write("WARNING: To file will be writed what you will write!")
+            sys.stdout.write("WARNING: No such file or directory:{}!\n".format(self.file_to_code))
 
-            sys.stdout.write("WARNING: For coding will be used a new file!")
+            sys.stdout.write("WARNING: File with the entered name will be created and used for coding!\n")
             print("Enter text to be coded:")
             self.g.write(sys.stdin.readline(100))
             self.g.close()
