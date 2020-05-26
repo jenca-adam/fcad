@@ -24,7 +24,7 @@ class Hasher:
             for a in range(stren):
             
                 strng+=random.choice(list((chr(i) for i in range(maxchr))))
-                startstrs.append(strng)
+            startstrs.append(strng)
         return(tuple(startstrs))
     def _printh(self):
         return(self._hashdict)
