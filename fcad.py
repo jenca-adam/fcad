@@ -4,7 +4,7 @@ class FCaDError(TypeError):pass
 class Hasher:
 
     def __init__(self, strenght):
-        self.strenght=strenght+1
+        self.strenght=strenght
         self._hashdict={}
     def __getitem__(self,key):
         if key in self._hashdict.keys():
@@ -36,6 +36,15 @@ class Hasher:
         try:
             self.file=open(self.file_to_code)
         except FileNotFoundError:
-            raise FCaDError("No such file or directory:{}".format(self.file_to_code))
+
+            self.g=open(self.file_to_code,'w') 
+            sys.stdout.write("WARNING: To file will be writed what you will write!")
+
+            sys.stdout.write("WARNING: For coding will be used a new file!")
+            print("Enter text to be coded:")
+            self.g.write(sys.stdin.readline(100))
+            self.g.close()
+            self.file=open(self.file_to_code)
+            del self.g
 
 
