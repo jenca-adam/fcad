@@ -56,7 +56,6 @@ class Hasher:
             self.g.write(sys.stdin.readline(100))
             self.g.close()
             self.file=open(self.file_to_code)
-            del self.g
 
         def decode(string, dicti):
             srt=""
@@ -82,13 +81,12 @@ class Decoder():
             self.file=open(self.filename)
         except FileNotFoundError:
             raise FCaDError("No such file or directory:{}!".format(self.filename))
-            self.file=None
-            del self
-            return
+          
     def decode(self):
+     self.strength=self.file.readline()
         while True:
 
-            self.strength=self.file.readline()
+           
             self.dct={}
             
 
