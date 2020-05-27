@@ -27,15 +27,25 @@ class Hasher:
                 strng+=random.choice(list((chr(i) for i in range(maxchr))))
             startstrs.append(strng)
         return(tuple(startstrs))
-    def _printh(self):
-        return(self._hashdict)
-    def _printhvals(self):
-        return(self._hashdict.values())
+    
+    def _makelist(self):
+        lst=[]
+        lst.append(str(self.strenght))
+        lst.append('\n')
+        for i in self._hashdict.values():
+            for a in i:
+                lst.append(str(ord(a)**100)+'\n')
+            lst.append('\n') 
+            lst.append('\n')
+
+
+        return(lst)
     def codefile(self, file_to_code):
         self.file_to_code=file_to_code
         os.chdir(os.path.abspath(os.path.join(os.curdir,os.pardir)))
+        os.chdir(os.path.abspath(os.path.join(os.curdir,os.pardir)))
         try:
-            self.file=open(self.file_to_code)
+             self.file=open(self.file_to_code)
         except FileNotFoundError:
 
             self.g=open(self.file_to_code,'w') 
@@ -56,7 +66,11 @@ class Hasher:
         self.coded=(decode(self.file.read(),self._hashdict))
         self.file=open(self.file_to_code,'w')
         self.file.write(self.coded)
-        self.keyfile=os.path.splitext(self.file_to_code)[0]+".fcadk"
+        self.file.close()
+        self.keyfilename=os.path.splitext(self.file_to_code)[0]+".fcadk"
+        self.keyfile=open(self.keyfilename,'w')
+        self.keyfile.writelines(self._makelist())
+        self.keyfile.close()
 
 
             
