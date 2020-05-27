@@ -1,6 +1,6 @@
-import os,sys,random
+import os,sys,random,math
 maxchr=999
-class FCaDError(TypeError):pass
+class FCaDError(Exception):pass
 class Hasher:
 
     def __init__(self, strenght):
@@ -71,6 +71,29 @@ class Hasher:
         self.keyfile=open(self.keyfilename,'w')
         self.keyfile.writelines(self._makelist())
         self.keyfile.close()
+        self._hashdict={}
+class Decoder():
+    def __init__(self, filename):
+        self.filename=filename
+        if os.path.splitext(self.filename)[1]!=".fcadk":
+            raise FCaDError("File must be FCaD keyfile not{}".format(os.path.splitext(self.filename)[1]))
+
+        try:
+            self.file=open(self.filename)
+        except FileNotFoundError:
+            raise FCaDError("No such file or directory:{}!".format(self.filename))
+            self.file=None
+            del self
+            return
+    def decode(self):
+        while True:
+
+            self.strength=self.file.readline()
+            self.dct={}
+            
+
+
+
 
 
             
