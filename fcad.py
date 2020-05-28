@@ -1,5 +1,5 @@
 import os,sys,random,math
-maxchr=999
+maxchr=114111
 class FCaDError(Exception):pass
 class Hasher:
 
@@ -11,7 +11,7 @@ class Hasher:
             return(self._hashdict[key])
         else:
             raise FCaDError("Key is not in hashdict")
-    def __setitem__(self,val):
+    def __setitem__(self,foo,bar):
         raise FCaDError( "Hasher is read-only dict-like object, not dict")
     def update(self):
         print("Generating hashdict...")
@@ -34,7 +34,7 @@ class Hasher:
         lst.append('\n')
         for i in self._hashdict.values():
             for a in i:
-                lst.append(str(ord(a)**100)+'\n')
+                lst.append(str(ord(a)**maxchr)+'\n')
             lst.append('\n') 
             lst.append('\n')
 
@@ -53,7 +53,7 @@ class Hasher:
 
             sys.stdout.write("WARNING: File with the entered name will be created and used for coding!\n")
             print("Enter text to be coded:")
-            self.g.write(sys.stdin.readline(100))
+            self.g.write(sys.stdin.readline())
             self.g.close()
             self.file=open(self.file_to_code)
 
@@ -72,23 +72,44 @@ class Hasher:
         self.keyfile.close()
         self._hashdict={}
 class Decoder():
-    def __init__(self, filename):
+    def __init__(self, filename,filename2):
         self.filename=filename
+        self.filename2=filename2
         if os.path.splitext(self.filename)[1]!=".fcadk":
             raise FCaDError("File must be FCaD keyfile not{}".format(os.path.splitext(self.filename)[1]))
-
+        
         try:
             self.file=open(self.filename)
+
         except FileNotFoundError:
             raise FCaDError("No such file or directory:{}!".format(self.filename))
-          
-    def decode(self):
-     self.strength=self.file.readline()
-        while True:
+        try:
+            self.file2=open(self.filename2)
+        
+        except FileNotFoundError:
+            raise FCaDError("No such file or directory:{}!".format(self.filename2))
+    
+    def decodekeyfile(self):
+        def decode(integer):
+            return chr(round(integer**(1/maxchr)))
+        self.stpos=0   
+        self.strength=self.file.readline()
+        self._hdict={}
+        self.lineindex=0
+       
+     
+         while self.file.readline():
+            self.file.seek(self.stpos)
+            self.line=self.file.readline()
+            self.string=""
+            self.stpos=self.file.tell()
 
-           
-            self.dct={}
-            
+            self.string+=decode(int(self.line))
+            self._hdict[chr(self.lineindex)]=self.string
+        
+       
+
+        
 
 
 
