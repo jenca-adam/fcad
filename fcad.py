@@ -1,5 +1,5 @@
 import os,sys,random,math
-maxchr=114111
+maxchr=999
 class FCaDError(Exception):pass
 class Hasher:
 
@@ -34,9 +34,9 @@ class Hasher:
         lst.append('\n')
         for i in self._hashdict.values():
             for a in i:
-                lst.append(str(ord(a)**maxchr)+'\n')
+                lst.append(str(ord(a)**102)+'\n')
             lst.append('\n') 
-            lst.append('\n')
+         
 
 
         return(lst)
@@ -91,23 +91,26 @@ class Decoder():
     
     def decodekeyfile(self):
         def decode(integer):
-            return chr(round(integer**(1/maxchr)))
-        self.stpos=0   
+            try:
+                return (chr(round(integer**(1/102))))
+            except ValueError:
+                return("")
         self.strength=self.file.readline()
         self._hdict={}
         self.lineindex=0
-       
-     
-         while self.file.readline():
-            self.file.seek(self.stpos)
-            self.line=self.file.readline()
-            self.string=""
-            self.stpos=self.file.tell()
+        chars=[]
+        for line in self.file:
+            
+            if not line:
+               break
+            if line != '\n':
+                chars.append(decode(int(line)))
+            else:
+                self._hdict[chr(self.lineindex)]="".join(chars)
+                self.lineindex+=1
+                chars=[]
+        return (self._hdict)
 
-            self.string+=decode(int(self.line))
-            self._hdict[chr(self.lineindex)]=self.string
-        
-       
 
         
 
