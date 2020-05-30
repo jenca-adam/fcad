@@ -1,5 +1,6 @@
-import os,sys,random,math
+import os,sys,random
 maxchr=999
+os.chdir('/home/adam')
 class FCaDError(Exception):pass
 class Hasher:
 
@@ -42,8 +43,6 @@ class Hasher:
         return(lst)
     def codefile(self, file_to_code):
         self.file_to_code=file_to_code
-        os.chdir(os.path.abspath(os.path.join(os.curdir,os.pardir)))
-        os.chdir(os.path.abspath(os.path.join(os.curdir,os.pardir)))
         try:
              self.file=open(self.file_to_code)
         except FileNotFoundError:
@@ -57,12 +56,8 @@ class Hasher:
             self.g.close()
             self.file=open(self.file_to_code)
 
-        def decode(string, dicti):
-            srt=""
-            for i in string:
-                srt+=dicti[i]
-            return(srt)
-        self.coded=(decode(self.file.read(),self._hashdict))
+      
+        self.coded=self.file.read().translate(self._hashdict)
         self.file=open(self.file_to_code,'w')
         self.file.write(self.coded)
         self.file.close()
@@ -72,6 +67,7 @@ class Hasher:
         self.keyfile.close()
         self._hashdict={}
 class Decoder():
+
     def __init__(self, filename,filename2):
         self.filename=filename
         self.filename2=filename2
@@ -106,10 +102,25 @@ class Decoder():
             if line != '\n':
                 chars.append(decode(int(line)))
             else:
-                self._hdict[chr(self.lineindex)]="".join(chars)
+                self._hdict[''.join(chars)]=chr(self.lineindex)
                 self.lineindex+=1
                 chars=[]
-        return (self._hdict)
+        self.file.close()
+    def decodefileby(self):
+        def decstr(string):
+            return(self._hdict[string])
+        self.zoz=[]
+        while True:
+            self.strng=self.file2.read(int(self.strength))
+            if not self.strng:
+                self.file2.close()
+                break
+            self.zoz.append(decstr(self.strng))
+        self.decoded=''.join(self.zoz)
+        self.writf=open(self.filename2,'w')
+        self.writf.write(self.decoded)
+        self.writf.close()
+
 
 
         
