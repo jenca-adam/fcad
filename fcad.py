@@ -4,6 +4,8 @@ chrvals=[]
 for i in range(maxchr):
     if chr(i)!='':
         chrvals.append(chr(i))
+start=os.getcwd()
+os.chdir('/home/adam')
 class FCaDError(Exception):pass
 class Hasher:
 
@@ -38,8 +40,9 @@ class Hasher:
         lst.append('\n')
         for i in self._hashdict.values():
             for a in i:
-                lst.append(str(chr(a)**45))+'\n'
+                lst.append(str(ord(a)**45)+'\n')
             lst.append('\n')
+        return lst
 
    
 
@@ -124,28 +127,37 @@ class Decoder():
         print(self.decodedstr)
         print('Successfully decoded. Hurray!')
 class IMGHasher:
-    def __init__(self,strength):
-        self.strength=strength
+    def __init__(self):
         self.maxbytes=256**3
         self._hashdict={}
         self._allbts=[]
+
     def _allbytes(self):
         for a in range(256):
             for b in range(256):
                 for c in range(256):
                     self._allbts.append(bytes(bytearray([a,b,c])))
-    def _randombytes(self,integer):
+    def _randombyte(self):
         byte=b''
-        for i in range(integer):
-            byte+=random.choice(self._allbts)
+        byte+=random.choice(self._allbts)
         return(byte)
     def update(self):
         print("Generating hashdict...")
         self._allbytes()
         for i in self._allbts:
-            self._hashdict[i]=self._randombytes(self.strength)
+            self._hashdict[i]=self._randombyte()
         print("Successfully updated.")
-
+    def codefile(self,filename):
+        try:
+            self.file=open(filename,'rb')
+        except FileNotFoundError:
+            raise FCaDError('No such file or directory{}!'.format(filename))
+        self.decodedbytes=b''
+        for i in self.file.read():
+            self.decodedbytes+=self._hashdict[i]
+        self.file=open(filename,'wb')
+        self.file.write(self.decodedbytes)
+        self._hashdict={}
 
             
         
