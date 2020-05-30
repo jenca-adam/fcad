@@ -1,5 +1,9 @@
 import os,sys,random,math
-maxchr=999
+maxchr=9999
+chrvals=[]
+for i in range(maxchr):
+    if chr(i)!='':
+        chrvals.append(chr(i))
 class FCaDError(Exception):pass
 class Hasher:
 
@@ -24,7 +28,7 @@ class Hasher:
             strng=""
             for a in range(stren):
             
-                strng+=random.choice(list((chr(i) for i in range(maxchr))))
+                strng+=random.choice(chrvals)
             startstrs.append(strng)
         return(tuple(startstrs))
     
@@ -34,7 +38,7 @@ class Hasher:
         lst.append('\n')
         for i in self._hashdict.values():
             for a in i:
-                lst.append(str(ord(a)**102)+'\n')
+                lst.append(str(ord(a)**45)+'\n')
             lst.append('\n') 
          
 
@@ -92,10 +96,10 @@ class Decoder():
     def decodekeyfile(self):
         def decode(integer):
             try:
-                return (chr(round(integer**(1/102))))
+                return (chr(round(integer**(1/45))))
             except ValueError:
                 return("")
-        self.strength=self.file.readline()
+        self.strength=int(self.file.readline().strip())
         self._hdict={}
         self.lineindex=0
         chars=[]
@@ -106,13 +110,26 @@ class Decoder():
             if line != '\n':
                 chars.append(decode(int(line)))
             else:
-                self._hdict[chr(self.lineindex)]="".join(chars)
+                self._hdict["".join(chars)]=chr(self.lineindex)
+
                 self.lineindex+=1
                 chars=[]
-        return (self._hdict)
-
-
         
+
+
+    def decodefileby(self):
+        self.zoz1=[]
+        while True:
+            e=self.file2.read(self.strength)
+            if not e:
+                break
+            self.zoz1.append(self._hdict[e])
+        self.decodedstr=''.join(self.zoz1)
+        self.file2=open(self.filename2,'w')
+        self.file2.write(self.decodedstr)
+        self.file2.close()
+        print(self.decodedstr)
+        print('Successfully decoded. Hurray!')
 
 
 
