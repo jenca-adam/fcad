@@ -20,7 +20,7 @@ class Hasher:
     def update(self):
         print("Generating hashdict...")
         self._hashdict=dict(zip((chr(i)for i in range(maxchr)),(self._makehashdict(self.strenght))))       
-        print("Sucesfully updated. Call printh()to print hashdict, printhvals() to print its values.")
+        print("Sucesfully updated.")
     def _makehashdict(self, stren):
         startstrs=[]
         strng=""
@@ -38,12 +38,11 @@ class Hasher:
         lst.append('\n')
         for i in self._hashdict.values():
             for a in i:
-                lst.append(str(ord(a)**45)+'\n')
-            lst.append('\n') 
-         
+                lst.append(str(chr(a)**45))+'\n'
+            lst.append('\n')
 
+   
 
-        return(lst)
     def codefile(self, file_to_code):
         self.file_to_code=file_to_code
         try:
@@ -124,6 +123,32 @@ class Decoder():
         self.file2.close()
         print(self.decodedstr)
         print('Successfully decoded. Hurray!')
+class IMGHasher:
+    def __init__(self,strength):
+        self.strength=strength
+        self.maxbytes=256**3
+        self._hashdict={}
+        self._allbts=[]
+    def _allbytes(self):
+        for a in range(256):
+            for b in range(256):
+                for c in range(256):
+                    self._allbts.append(bytes(bytearray([a,b,c])))
+    def _randombytes(self,integer):
+        byte=b''
+        for i in range(integer):
+            byte+=random.choice(self._allbts)
+        return(byte)
+    def update(self):
+        print("Generating hashdict...")
+        self._allbytes()
+        for i in self._allbts:
+            self._hashdict[i]=self._randombytes(self.strength)
+        print("Successfully updated.")
+
+
+            
+        
 
 
 
