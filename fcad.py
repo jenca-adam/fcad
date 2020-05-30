@@ -1,6 +1,9 @@
-import os,sys,random
-maxchr=999
-os.chdir('/home/adam')
+import os,sys,random,math
+maxchr=9999
+chrvals=[]
+for i in range(maxchr):
+    if chr(i)!='':
+        chrvals.append(chr(i))
 class FCaDError(Exception):pass
 class Hasher:
 
@@ -25,7 +28,7 @@ class Hasher:
             strng=""
             for a in range(stren):
             
-                strng+=random.choice(list((chr(i) for i in range(maxchr))))
+                strng+=random.choice(chrvals)
             startstrs.append(strng)
         return(tuple(startstrs))
     
@@ -35,7 +38,7 @@ class Hasher:
         lst.append('\n')
         for i in self._hashdict.values():
             for a in i:
-                lst.append(str(ord(a)**102)+'\n')
+                lst.append(str(ord(a)**45)+'\n')
             lst.append('\n') 
          
 
@@ -66,6 +69,7 @@ class Hasher:
         self.keyfile.writelines(self._makelist())
         self.keyfile.close()
         self._hashdict={}
+
 class Decoder():
 
     def __init__(self, filename,filename2):
@@ -88,10 +92,10 @@ class Decoder():
     def decodekeyfile(self):
         def decode(integer):
             try:
-                return (chr(round(integer**(1/102))))
+                return (chr(round(integer**(1/45))))
             except ValueError:
                 return("")
-        self.strength=self.file.readline()
+        self.strength=int(self.file.readline().strip())
         self._hdict={}
         self.lineindex=0
         chars=[]
@@ -102,28 +106,24 @@ class Decoder():
             if line != '\n':
                 chars.append(decode(int(line)))
             else:
-                self._hdict[''.join(chars)]=chr(self.lineindex)
+                self._hdict["".join(chars)]=chr(self.lineindex)
+
                 self.lineindex+=1
                 chars=[]
-        self.file.close()
-    def decodefileby(self):
-        def decstr(string):
-            return(self._hdict[string])
-        self.zoz=[]
-        while True:
-            self.strng=self.file2.read(int(self.strength))
-            if not self.strng:
-                self.file2.close()
-                break
-            self.zoz.append(decstr(self.strng))
-        self.decoded=''.join(self.zoz)
-        self.writf=open(self.filename2,'w')
-        self.writf.write(self.decoded)
-        self.writf.close()
-
-
-
         
+    def decodefileby(self):
+        self.zoz1=[]
+        while True:
+            e=self.file2.read(self.strength)
+            if not e:
+                break
+            self.zoz1.append(self._hdict[e])
+        self.decodedstr=''.join(self.zoz1)
+        self.file2=open(self.filename2,'w')
+        self.file2.write(self.decodedstr)
+        self.file2.close()
+        print(self.decodedstr)
+        print('Successfully decoded. Hurray!')
 
 
 
