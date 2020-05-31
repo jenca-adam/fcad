@@ -4,7 +4,7 @@ chrvals=[]
 for i in range(maxchr):
     if chr(i)!='':
         chrvals.append(chr(i))
-start=os.getcwd()
+
 os.chdir('/home/adam')
 class FCaDError(Exception):pass
 class Hasher:
@@ -61,8 +61,12 @@ class Hasher:
             self.g.close()
             self.file=open(self.file_to_code)
 
-      
-        self.coded=self.file.read().translate(self._hashdict)
+        def decode(string,dictionary):
+            z=[]
+            for i in string:
+                z.append(dictionary[i])
+            return ''.join(z)
+        self.coded=decode(self.file.read(),self._hashdict)
         self.file=open(self.file_to_code,'w')
         self.file.write(self.coded)
         self.file.close()
@@ -130,22 +134,23 @@ class IMGHasher:
     def __init__(self):
         self.maxbytes=256**3
         self._hashdict={}
-        self._allbts=[]
+        self.allbts=[]
 
     def _allbytes(self):
         for a in range(256):
             for b in range(256):
                 for c in range(256):
-                    self._allbts.append(bytes(bytearray([a,b,c])))
+                    self.allbts.append(bytes(bytearray([a,b,c])))
     def _randombyte(self):
         byte=b''
-        byte+=random.choice(self._allbts)
+        byte+=random.choice(self.allbts)
         return(byte)
     def update(self):
         print("Generating hashdict...")
         self._allbytes()
-        for i in self._allbts:
-            self._hashdict[i]=self._randombyte()
+        self.allbtshuffled=self.allbts
+        random.shuffle(self.allbtshuffled)
+        self._hashdict=dict(zip(self.allbts,self.allbtshuffled))
         print("Successfully updated.")
     def codefile(self,filename):
         try:
@@ -153,11 +158,19 @@ class IMGHasher:
         except FileNotFoundError:
             raise FCaDError('No such file or directory{}!'.format(filename))
         self.decodedbytes=b''
-        for i in self.file.read():
-            self.decodedbytes+=self._hashdict[i]
+        self.bytestodecode=self.file.read()
+        for i in range(len(self.bytestodecode)):
+            if self.bytestodecode[i-3:i]!=b'':
+                self.decodedbytes+=self._hashdict[self.bytestodecode[i-3:i]]
         self.file=open(filename,'wb')
         self.file.write(self.decodedbytes)
         self._hashdict={}
+def randchar():
+    return(random.choice(chrvals))
+def randbyte():
+    a,b,c=(random.randint(0,256) for i in range(3))
+    return(bytes(bytearray((a,b,c))))
+
 
             
         
