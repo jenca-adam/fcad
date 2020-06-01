@@ -47,6 +47,7 @@ class Hasher:
    
 
     def codefile(self, file_to_code):
+        '''This codes selcted file according to the current hashdict and creates keyfile(*.fcadk).'''
         self.file_to_code=file_to_code
         try:
              self.file=open(self.file_to_code)
@@ -96,6 +97,7 @@ class Decoder():
             raise FCaDError("No such file or directory:{}!".format(self.filename2))
     
     def decodekeyfile(self):
+        '''This decodes current keyfile.'''
         def decode(integer):
             try:
                 return (chr(round(integer**(1/45))))
@@ -118,6 +120,7 @@ class Decoder():
                 chars=[]
         
     def decodefileby(self):
+        '''This decodes current "file_to_decode" according to decoded keyfile'''
         self.zoz1=[]
         while True:
             e=self.file2.read(self.strength)
@@ -130,7 +133,7 @@ class Decoder():
         self.file2.close()
         print(self.decodedstr)
         print('Successfully decoded. Hurray!')
-class IMGHasher:
+class ByteHasher:
     def __init__(self):
         self.maxbytes=256**3
         self._hashdict={}
@@ -138,17 +141,14 @@ class IMGHasher:
 
     def _allbytes(self):
         for a in range(256):
-            for b in range(256):
-                for c in range(256):
-                    self.allbts.append(bytes(bytearray([a,b,c])))
+             self.allbts.append(bytes([a]))
     def _randombyte(self):
-        byte=b''
-        byte+=random.choice(self.allbts)
-        return(byte)
+        return(random.choice(self.allbts))
     def update(self):
+       
         print("Generating hashdict...")
         self._allbytes()
-        self.allbtshuffled=self.allbts
+        self.allbtshuffled=self.allbts[:]
         random.shuffle(self.allbtshuffled)
         self._hashdict=dict(zip(self.allbts,self.allbtshuffled))
         print("Successfully updated.")
@@ -160,16 +160,28 @@ class IMGHasher:
         self.decodedbytes=b''
         self.bytestodecode=self.file.read()
         for i in range(len(self.bytestodecode)):
-            if self.bytestodecode[i-3:i]!=b'':
-                self.decodedbytes+=self._hashdict[self.bytestodecode[i-3:i]]
+            if self.bytestodecode[i-1:i]!=b'':
+                self.decodedbytes+=self._hashdict[self.bytestodecode[i-1:i]]
         self.file=open(filename,'wb')
         self.file.write(self.decodedbytes)
+        self.file2=open(os.path.splitext(filename)[1]+'.fcadk','w')
+        
+        self.file2.writelines(self._makelist())
+        self.file2.close()
         self._hashdict={}
+
+    def _makelist(self):
+        lst=[]
+        for i in self._hashdict.values():
+            for a in i:
+                lst.append(self.allbts.index(a)+b'\n')
+            lst.append(b'\n')
+                
 def randchar():
     return(random.choice(chrvals))
 def randbyte():
-    a,b,c=(random.randint(0,256) for i in range(3))
-    return(bytes(bytearray((a,b,c))))
+   a=random.randint(0,256)
+   return(bytes(([a])))
 
 
             
