@@ -5,7 +5,7 @@ for i in range(maxchr):
     if chr(i)!='':
         chrvals.append(chr(i))
 
-os.chdir('/home/ada')
+os.chdir('/home/adam')
 class FCaDError(Exception):pass
 class Hasher:
 
