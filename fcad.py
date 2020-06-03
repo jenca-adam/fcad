@@ -1,4 +1,4 @@
-import os,sys,random,math
+import os,sys,random,math,time
 maxchr=9999
 chrvals=[]
 for i in range(maxchr):
@@ -147,9 +147,7 @@ class ByteHasher:
     def _makelist(self):
             lst=[]
             for i in self._hashdict.values():
-                for a in range( len(i)):
-                    if i[a-1:a]!=b'':
-                        print('True')
+                lst.append(str(self.allbts.index(i)**134))
                 lst.append('\n')
             return lst
 
@@ -173,19 +171,81 @@ class ByteHasher:
                 self.decodedbytes+=self._hashdict[self.bytestodecode[i-1:i]]
         self.file=open(filename,'wb')
         self.file.write(self.decodedbytes)
-        self.file2=open(os.path.splitext(filename)[0]+'.fcadk','w')
+        self.file2=open(os.path.splitext(filename)[0]+'.fcadbk','w')
         
         self.file2.writelines(self._makelist())
         self.file2.close()
         self._hashdict={}
+class ByteDecoder:
+    def __init__(self, filename1, filename2):
+        self._hdict={}
+        self.allbts=[]
+        self.filename1=filename1
+        self.filename2=filename2
 
-                    
+        try:
+            self.file1=open(self.filename1,'rb')
+        except FileNotFoundError:
+            raise FCaDError('No such file or directory:{}!'.format(filename1))
+        try:
+            self.file2=open(self.filename2,'rb')
+        except FileNotFoundError:
+            raise FCaDError('No such file or directory:{}!'.format(filename2))
+        if os.path.splitext(filename1)[1]!= '.fcadbk':
+            raise FCaDError('Keyfile must be FCaD bytes keyfile("*.fcadbk"), not{}'.format(os.path.splitext(filename1)[1]))
+        for a in range(256):
+            self.allbts.append(bytes([a]))
+
+    def decode():
+        lineindex=0
+        for line in self.file1:
+            if float(int(line//134))!=float(line//134):
+                raise FCaDError('Keyfile is not readable')
+            try:
+                self._hdict[self.allbts.index(lineindex)]=self.allbts.index(int(line)//134)
+            except KeyError:
+                raise FCaDError('Files do not match. Make sure if you entered correct keyfile.')
+            lineindex+=1
+        self.file1.close()
+        soslist=[]
+        for i in splitbytes(self.file2.read()):
+            soslist.append(self._hdict(i))
+        self.file2=open(self.filename2,'ab')
+        for i in soslist:
+            self.file2.write(i)
+        self.file2.close()
+
+        print('Successfully decoded')
+      
+
+
+class PasswordGenerator:
+    def __init__(self,include_lowercase=True,include_uppercase=True,include_symbols=False,include_another=False,lenght=6):
+        (self.include_lowercase,self.include_uppercase,self.include_symbols,self.include_another,self.lenght)=(include_lowercase,include_uppercase,include_symbols,include_another,lenght)
+        self.lowercase=[chr(i)for i in range(ord('a'),ord('z')+1]
+        self.uppercase=[chr(i)for i in range(ord('A'),ord('Z')+1]
+        self.symbols=[]
+        for i in range(33,ord('A')):
+            self.symbols.append(chr(i))
+        for i in range(ord('z'),127):
+            self.symbols.append(chr(i))
+
+        if not 1<self.lenght<1000:
+            raise FCaDError('Lenght out of range:{}'.format(self.lenght))
+    def __iter__(self):
+        self.password=''
+
+
 def randchar():
     return(random.choice(chrvals))
 def randbyte():
    a=random.randint(0,256)
    return(bytes(([a])))
-
+def splitbytes(bts):
+    a=[]
+    for i in bts:
+        if bytes([i])!=b''
+            a.append(bytes([i]))
 
             
         
