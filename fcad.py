@@ -42,7 +42,7 @@ class Hasher:
             for a in i:
                 lst.append(str(ord(a)**45)+'\n')
             lst.append('\n')
-        return lst
+        return (tuple(lst))
 
    
 
@@ -144,6 +144,15 @@ class ByteHasher:
              self.allbts.append(bytes([a]))
     def _randombyte(self):
         return(random.choice(self.allbts))
+    def _makelist(self):
+            lst=[]
+            for i in self._hashdict.values():
+                for a in range( len(i)):
+                    if i[a-1:a]!=b'':
+                        print('True')
+                lst.append('\n')
+            return lst
+
     def update(self):
        
         print("Generating hashdict...")
@@ -164,19 +173,13 @@ class ByteHasher:
                 self.decodedbytes+=self._hashdict[self.bytestodecode[i-1:i]]
         self.file=open(filename,'wb')
         self.file.write(self.decodedbytes)
-        self.file2=open(os.path.splitext(filename)[1]+'.fcadk','w')
+        self.file2=open(os.path.splitext(filename)[0]+'.fcadk','w')
         
         self.file2.writelines(self._makelist())
         self.file2.close()
         self._hashdict={}
 
-    def _makelist(self):
-        lst=[]
-        for i in self._hashdict.values():
-            for a in i:
-                lst.append(self.allbts.index(a)+b'\n')
-            lst.append(b'\n')
-                
+                    
 def randchar():
     return(random.choice(chrvals))
 def randbyte():
