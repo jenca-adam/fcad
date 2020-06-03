@@ -196,13 +196,13 @@ class ByteDecoder:
         for a in range(256):
             self.allbts.append(bytes([a]))
 
-    def decode():
+    def decode(self):
         lineindex=0
         for line in self.file1:
-            if float(int(line//134))!=float(line//134):
+            if float(int(line)**(1/134))!=float(float(line)**(1/134)):
                 raise FCaDError('Keyfile is not readable')
             try:
-                self._hdict[self.allbts.index(lineindex)]=self.allbts.index(int(line)//134)
+                self._hdict[self.allbts.index(lineindex)]=self.allbts.index(int(line)**(1/134))
             except KeyError:
                 raise FCaDError('Files do not match. Make sure if you entered correct keyfile.')
             lineindex+=1
@@ -222,8 +222,8 @@ class ByteDecoder:
 class PasswordGenerator:
     def __init__(self,include_lowercase=True,include_uppercase=True,include_symbols=False,include_another=False,lenght=6):
         (self.include_lowercase,self.include_uppercase,self.include_symbols,self.include_another,self.lenght)=(include_lowercase,include_uppercase,include_symbols,include_another,lenght)
-        self.lowercase=[chr(i)for i in range(ord('a'),ord('z')+1]
-        self.uppercase=[chr(i)for i in range(ord('A'),ord('Z')+1]
+        self.lowercase=[chr(i)for i in range(ord('a'),ord('z')+1)]
+        self.uppercase=[chr(i)for i in range(ord('A'),ord('Z')+1)]
         self.symbols=[]
         for i in range(33,ord('A')):
             self.symbols.append(chr(i))
@@ -244,7 +244,7 @@ def randbyte():
 def splitbytes(bts):
     a=[]
     for i in bts:
-        if bytes([i])!=b''
+        if bytes([i])!=b'':
             a.append(bytes([i]))
 
             
