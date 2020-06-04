@@ -147,7 +147,7 @@ class ByteHasher:
     def _makelist(self):
             lst=[]
             for i in self._hashdict.values():
-                lst.append(str(self.allbts.index(i)**134))
+                lst.append(str(self.allbts.index(i)**102))
                 lst.append('\n')
             return lst
 
@@ -198,15 +198,20 @@ class ByteDecoder:
 
     def decode(self):
         lineindex=0
-        for line in self.file1:
-            if float(int(line)**(1/134))!=float(float(line)**(1/134)):
-                raise FCaDError('Keyfile is not readable')
-            try:
-                self._hdict[self.allbts.index(lineindex)]=self.allbts.index(int(line)**(1/134))
-            except KeyError:
-                raise FCaDError('Files do not match. Make sure if you entered correct keyfile.')
-            lineindex+=1
-        self.file1.close()
+        try:
+            for line in self.file1:
+                try:    
+                    if float(int(line)**(1/102))!=float(float(line)**(1/102)):
+                        raise FCaDError('Keyfile is not readable')
+                        self._hdict[self.allbts[lineindex]]=self.allbts[round(int(line)**(1/102))]
+                except (KeyError):
+                    raise FCaDError('Files do not match. Make sure if you entered correct keyfile.')
+                except OverflowError:
+                    raise FCaDError('Keyfile is not readable')
+                lineindex+=1
+
+        finally:
+            self.file1.close()
         soslist=[]
         for i in splitbytes(self.file2.read()):
             soslist.append(self._hdict(i))
