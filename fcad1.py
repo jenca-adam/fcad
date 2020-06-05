@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import os,sys,random,math,time
 maxchr=9999
 chrvals=[]
@@ -153,38 +151,19 @@ class PasswordGenerator:
         if self.include_uppercase:self.includes.append(self.uppercase)
         if self.include_symbols:self.includes.append(self.symbols)
         if self.include_another:self.includes.append(self.another)
-        if(self.include_lowercase,self.include_uppercase,self.include_symbols,self.include_another)==(False,False,False,False):raise FCaDError('Cannot generate password: no characters allowed')
+        else:
+            raise FCaDError('Cannot generate password: no characters allowed')
         if not 1<self.lenght<10000:
             raise FCaDError('Lenght out of range:{}'.format(self.lenght))
     def __iter__(self):
-        self.password=[]
+        self.password=''
         return self
     def __next__(self):
-        self.password=[]
+        self.password=''
         for i in range(self.lenght):
             self.password.append(random.choice(random.choice(self.includes)))
 
-        return(''.join(self.password))
-def main():
-    acceptable_commands={'codefile':{'name':'codefile','args':2,'command':lambda strenght,filename:exec('h=Hasher(int(strenght))\nh.update()\nh.codefile(filename)\n'),'description':'codefile:args:strenght,filename.Codes the file by actual Hasher.'},'decodefile':{'name':'decodefile','args':2,'command':lambda filename1,filename2:exec('d=Decoder(filename1,filename2)\nd.decodekeyfile()\nd.decodefileby()'),'description':'decodefile:args:filename1,filename2.Decodes file according to filenmae2 according to file according to filename2'},'generpw':{'name':'generpw','args':5,'command':lambda l,u,s,a,st:exec('p=PasswordGenerator(bool(int(l)),bool(int(u)),bool(int(s)),bool(int(a)),int(st))\nprint(next(iter(p)))'),'description':'generpw:args:include_lowercase,include_uppercase,include_symbols,include_another,lenght.Generates password.'},'exit':{'name':'exit','args':0,'command':sys.exit,'description':'exit:args:none.Exits prompt.'},'help':{'name':'help','args':0,'command':lambda:print([i['description']for i in acceptable_commands.values()]),'description':'help:args:none.Prints help string'}}    
-    
-    a=input('>')
-    if a.split(' ')[0]not in acceptable_commands.keys():
-        print('fcad:{}:command not found'.format(a.split(' ')[0]))
-        main()
-    else:
-        list_of_args=a.split(' ')
-        list_of_args.remove(list_of_args[0])
-       
-        commname=a.split(' ')[0]
-        if acceptable_commands[a.split(' ')[0]]['args']<len(list_of_args):
-            print('Too much args.')
-            main()
-        if acceptable_commands[a.split(' ')[0]]['args']>len(list_of_args):
-            print('Too few args')
-            main()
-        acceptable_commands[commname]['command'](*list_of_args)
-        main()
+        return(self.password)
 def randchar():
     return(random.choice(chrvals))
 def randbyte():
@@ -196,8 +175,6 @@ def splitbytes(bts):
         if bytes([i])!=b'':
             a.append(bytes([i]))
     return a
-if __name__=='__main__':
-    main()
             
         
 
