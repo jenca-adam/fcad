@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os,sys,random,getpass,time,hashlib,subprocess,argparse
+import os,sys,random,getpass,hashlib,subprocess,argparse,zipfile
 maxchr=9999
 chrvals=[]
 for i in range(maxchr):
@@ -56,6 +56,7 @@ class Hasher:
         '''This codes selcted file according to the current hashdict and creates keyfile(*.fcadk).'''
         self.file_to_code=file_to_code
         try:
+
              self.file=open(self.file_to_code)
         except FileNotFoundError:
 
@@ -83,6 +84,13 @@ class Hasher:
         self.keyfile=open(self.keyfilename,'w')
         self.keyfile.writelines(self._makelist())
         self.keyfile.close()
+        self.fcadname=os.path.splitext(self.file_to_code)[0]+'.fcad'
+        with zipfile.ZipFile(self.fcadname,'w') as zfile:
+
+            zfile.write(os.path.splitext(self.file_to_code)[0])
+            zfile.write(self.keyfilename)
+            zfile.setpassword(getpass.getpass().encode('utf-8'))
+        os.remove(self.keyfilename)
         self._hashdict={}
 
 class Decoder():
@@ -91,8 +99,9 @@ class Decoder():
         self.filename=filename
         self.do=True
         self.paswd=hashlib.sha224(bytes(getpass.getpass('Enter password:'),encoding='utf-8')).hexdigest()
-        if os.path.splitext(self.filename)[1]!=".fcadk":
-            raise FCaDError("File must be fcad keyfile not{}".format(os.path.splitext(self.filename)[1]))
+        if os.path.splitext(self.filename)[1]!=".fcad":
+            raise FCaDError("File must be fcad file not{}".format(os.path.splitext(self.filename)[1]))
+        subprocess.call(['unzip',filename])
         self.filename1=os.path.splitext(filename)[0]+'.fcadk'
         self.file=open(self.filename1)
         self.filename2=os.path.splitext(filename)[0]
@@ -220,7 +229,7 @@ def parse_error(ERROR):
     if  isinstance(ERROR,FCaDError): 
         print('Something is wrong with your input: {}'.format(ERROR))
     else:
-        print('WRONG:{}.Please, send bug report to jenca.adam@gmail.com'.format(ERROR))
+        print('TRBACK:{};WRONG:{}.Please, send bug report to jenca.adam@gmail.com'.format(type(ERROR),ERROR))
 parser=argparse.ArgumentParser(description='Encodes and decodes files')
 sparsers=parser.add_subparsers(help='blah help')
 
