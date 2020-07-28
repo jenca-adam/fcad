@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os,sys,random,getpass,time,hashlib,subprocess
+import os,sys,random,getpass,time,hashlib,subprocess,argparse
 maxchr=9999
 chrvals=[]
 for i in range(maxchr):
@@ -147,6 +147,8 @@ class Decoder():
             print(self.decodedstr)
             print('Successfully decoded. Hurray!')
 
+def _setval(variable,value):
+    variable=value
 
 class PasswordGenerator:
     def __init__(self,include_lowercase=True,include_uppercase=True,include_symbols=False,include_another=False,lenght=6):
@@ -176,7 +178,7 @@ class PasswordGenerator:
             self.password.append(random.choice(random.choice(self.includes)))
        
         return(''.join(self.password))
-acceptable_commands={'codefile':{'name':'codefile','args':2,'command':lambda strenght,filename:exec('h=Hasher(int(strenght))\nh.update()\nh.codefile(filename)\n'),'description':'codefile:args:strenght,filename.Codes the file by actual Hasher.'},'decodefile':{'name':'decodefile','args':1,'command':lambda filename1:exec('d=Decoder(filename1)\nd.decodekeyfile()\nd.decodefileby()'),'description':'decodefile:args:filename1,filename2.Decodes file according to filenmae2 according to file according to filename2'},'generpw':{'name':'generpw','args':5,'command':lambda l,u,s,a,st:exec('p=PasswordGenerator(bool(int(l)),bool(int(u)),bool(int(s)),bool(int(a)),int(st))\nprint(next(iter(p)))'),'description':'generpw:args:include_lowercase,include_uppercase,include_symbols,include_another,pronounciablelenght.Generates password.'},'exit':{'name':'exit','args':0,'command':sys.exit,'description':'exit:args:none.Exits prompt.'},'help':{'name':'help','args':0,'command':lambda:print([i['description']for i in acceptable_commands.values()]),'description':'help:args:none.Prints help string'}}    
+acceptable_commands={'codefile':{'name':'codefile','args':2,'command':lambda strenght,filename:exec('h=Hasher(int(strenght))\nh.update()\nh.codefile(filename)\n'),'description':'codefile:args:strenght,filename.Codes the file by actual Hasher.'},'decodefile':{'name':'decodefile','args':1,'command':lambda filename1:exec('d=Decoder(filename1)\nd.decodekeyfile()\nd.decodefileby()'),'description':'decodefile:args:filename1,filename2.Decodes file according to filenmae2 according to file according to filename2'},'generpw':{'name':'generpw','args':5,'command':lambda l,u,s,a,st:exec('p=PasswordGenerator(bool(int(l)),bool(int(u)),bool(int(s)),bool(int(a)),int(st))\nprint(next(iter(p)))'),'description':'generpw:args:include_lowercase,include_uppercase,include_symbols,include_another,pronounciablelenght.Generates password.'},'exit':{'name':'exit','args':0,'command':sys.exit,'description':'exit:args:none.Exits prompt.'},'help':{'name':'help','args':0,'command':lambda:print(*[i['description']for i in acceptable_commands.values()],sep='\n'),'description':'help:args:none.Prints help string'}}    
 def main():
     try:
         a=input('>')
@@ -201,6 +203,8 @@ def main():
         main()
     except EOFError:
         exit()
+    except Exception as error:
+        parse_error(error)
 def randchar():
     return(random.choice(chrvals))
 def randbyte():
@@ -212,13 +216,56 @@ def splitbytes(bts):
         if bytes([i])!=b'':
             a.append(bytes([i]))
     return a
+def parse_error(ERROR):
+    if  isinstance(ERROR,FCaDError): 
+        print('Something is wrong with your input: {}'.format(ERROR))
+    else:
+        print('WRONG:{}.Please, send bug report to jenca.adam@gmail.com'.format(ERROR))
+parser=argparse.ArgumentParser(description='Encodes and decodes files')
+sparsers=parser.add_subparsers(help='blah help')
+
+codefile_prsr=sparsers.add_parser('codefile',help='sjhjshjshjshhjshj')
+codefile_prsr.add_argument('strenght',type=int,help='iewik')
+codefile_prsr.add_argument('file',type=str,help='gah')
+
+decodefile=sparsers.add_parser('decodefile',help='hsahsa')
+decodefile.add_argument('file',help='suhugsqd')
+
+generpw_prsr=sparsers.add_parser('generpw',help='hashj')
+generpw_prsr.add_argument('lowercase',type=bool,help='hsa')
+generpw_prsr.add_argument('uppercase',type=bool,help='jj')
+generpw_prsr.add_argument('symbols',type=bool,help='djdj')
+generpw_prsr.add_argument("another",type=bool,help='sjstswteedjehjg')
+generpw_prsr.add_argument('length',type=int,help='dheblahbahaha378')
 if __name__=='__main__':
-    main()
-            
+    if len(sys.argv)==1:
+        main()
+    else:
+        try:
+            if 'codefile' in sys.argv:
+                codefile_args= parser.parse_args(sys.argv[1:])
+                h=Hasher(codefile_args.strenght)
+                h.update()
+                h.codefile(codefile_args.file)
+            elif 'decodefile' in sys.argv:
+                decodefile_args=parser.parse_args(sys.argv[1:])
+                d=Decoder(decodefile_args.file)
+                d.decodekeyfile()
+                d.decodefileby()
+            elif 'generpw' in sys.argv:
+                generpw_args=parser.parse_args(sys.argv[1:])
+                pg=PasswordGenerator(generpw_args.lowercase,generpw_args.uppercase,generpw_args.symbols,generpw_args.another,generpw_args.length)
+                print(next(pg))
+        except KeyboardInterrupt:
+            sys.exit()
+        except EOFError:
+            sys.exit()
+        except Exception as error:
+            parse_error(error)
         
 
 
 
 
 
-            
+        
