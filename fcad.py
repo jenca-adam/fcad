@@ -67,18 +67,124 @@ class Hasher:
             zfile.setpassword(getpass.getpass().encode('utf-8'))
         os.remove(self.keyfilename)
         self._hashdict={}
+class SafeHasher():
+    def __init__(self,keyfilename):
+        self._hashdict={}
+        self.pw=hashlib.sha224(bytes(getpass.getpass('Enter new password for this file:'),encoding='utf-8')).hexdigest()
+        try:
+            self.file=open(keyfilename)
+        except IOError:
+            self.file=open(keyfilename,'w')
+            self.file.writelines(self._makelist())
+            self.file.close()
+            self.file=open(keyfilename)
+    def __getitem__(self,key):
+        if key in self._hashdict.keys():
+            return(self._hashdict[key])
+        else:
+            raise FCaDError("Key is not in hashdict")
+    def __setitem__(self,foo,bar):
+        raise FCaDError( "Hasher is read-only dict-like object, not dict")
+    def _makelist(self):
+        lst=[]
+        lst.append(str(self.pw))
+        lst.append('\n')
+        for i in self._hashdict.values():
+            lst.append(str(i**45)+'\n')
+            lst.append('\n')
+        return (tuple(lst))
+
+    def codefile(self, file_to_code):
+        '''This codes selcted file according to the current hashdict and creates keyfile(*.fcadk).'''
+        self.file_to_code=file_to_code
+        try:
+
+             self.file=open(self.file_to_code,'rb')
+        except FileNotFoundError:
+            raise FCaDError(f'No such file or directory:{self.file_to_code}')
+        def encode(lst,dictionary):
+            z=[]
+            for i in lst:
+                z.append(dictionary[i])
+            return z
+            self.zoz1=[]
+
+        self.coded=encode(list(self.file.read()),self._hashdict)
+        self.file=open(os.path.splitext(self.file_to_code)[0],'wb')
+        self.file.write(bytes(self.coded))
+        self.file.close()
+        self.keyfilename=os.path.splitext(self.file_to_code)[0]+".fcadk"
+        self.keyfile=open(self.keyfilename,'w')
+        self.keyfile.writelines(self._makelist())
+        self.keyfile.close()
+
+        self._hashdict={}
+    def decodekeyfile(self):
+        '''This decodes current keyfile.'''
+        def decode(integer):
+            return (round(integer**(1/45)))
+        self.paswd1=self.file.readline().strip()
+
+        self._hashdict={}
+        self.lineindex=0
+        byte=b''
+        for line in self.file:
+            
+            if not line:
+               break
+            if line != '\n':
+                byte=decode(int(line))
+            else:
+                self._hashdict[byte]=self.lineindex
+        
+                self.lineindex+=1
+                chars=[]
+        self.file.close()
+        print(*self._hashdict)
+
+        
+class KFGenerator():
+    def __init__(self,name):
+        self.name=name
+        self.file=open('name','w')
+        self.update()
+        self.file.writelines(self._makelist())
+    def update(self):
+        print("Generating hashdict...WARNING: This might take a few seconds.")
+        shuffle=list(range(maxchr))
+        random.shuffle(shuffle)
+        print(shuffle)
+        self._hashdict=dict(zip(range(maxchr),(shuffle)))       
+        print("Sucesfully updated.")
+    def _makelist(self):
+        lst=[]
+        lst.append(str(self.pw))
+        lst.append('\n')
+        for i in self._hashdict.values():
+            lst.append(str(i**45)+'\n')
+            lst.append('\n')
+        return (tuple(lst))
+    
+
 
 class Decoder():
 
     def __init__(self, filename):
         self.filename=filename
         self.do=True
+        self.safe=False
         self.paswd=hashlib.sha224(bytes(getpass.getpass('Enter password:'),encoding='utf-8')).hexdigest()
         if os.path.splitext(self.filename)[1]!=".fcad":
-            raise FCaDError("File must be fcad file not{}".format(os.path.splitext(self.filename)[1]))
-        subprocess.call(['unzip',filename,'-o'])
-        self.filename1=os.path.splitext(filename)[0]+'.fcadk'
-        self.file=open(self.filename1)
+            if os.path.splitext(self.filename)[1]==".fcadk":
+                self.safe=True
+            else:
+                raise FCaDError("File must be fcad file not{}".format(os.path.splitext(self.filename)[1]))
+        if not self.safe:
+            os.system(f'unzip -o {filename}')
+            self.filename1=os.path.splitext(filename)[0]+'.fcadk'
+            self.file=open(self.filename1)
+        else:
+            self.file=open(self.filename)
         self.filename2=os.path.splitext(filename)[0]
         self.file2=open(self.filename2,'rb')
         
