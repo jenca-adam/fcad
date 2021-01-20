@@ -3,7 +3,7 @@
 import random
 from .perms import cyclic
 def new():
-    shuffle=list(range(255))
+    shuffle=list(range(256))
     random.shuffle(shuffle)
     lines=cyclic(shuffle)
     random.shuffle(lines)
@@ -16,9 +16,9 @@ def dump(key,s):
     return bytes(b)
 
 def analyze(file):
-    s=255
+    s=256
     file.seek(1)
     k=[]
-    while len(k)<255:
+    while len(k)<256:
         k.append(list(file.read(s)))
     return k
