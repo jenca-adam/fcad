@@ -21,24 +21,43 @@ class Window(QWidget):
         self.label.setFont(QFont("Forte",40))
         self.label.adjustSize()
         self.butt_encrypt=QPushButton('Encrypt')
+        self.butt_nk=QPushButton('New Key')
+    
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.label)
         self.layout.addWidget (self.butt_encrypt)
+        self.layout.addWidget (self.butt_nk)
         self.butt_encrypt.clicked.connect(self.view_encrypter)
+        self.butt_nk.clicked.connect(self.view_nk)
         self.InfoLabel=QLabel(self)
         self.InfoLabel.setText('')
         self.setLayout(self.layout)
     def view_encrypter(self):
         self.label.setText('FCaD Encrypter')
+        self.butt_nk.hide()
         self.InfoLabel.setText('This encrypter needs key file. If you have not any, you should generate one.')
         self.InfoLabel.move(1920//2-250,1005-100)
         self.InfoLabel.adjustSize()
         self.title='FCaD Encrypter'
+        self.lefk=QLineEdit("",self)
+        self.lefk.setGeometry(80, 80, 150, 40)
         self.setWindowTitle(self.title)
         self.butt_encrypt.setText('Encrypt File')
-        self.butt_encrypt.clicked.connect(self.get_both)
+        self.butt_encrypt.clicked.connect(self.get_enc)
         self.show()
-    def get_both(self):
+    def view_nk(self):
+        
+        self.label.setText('FCaDKey generator')
+        self.butt_nk.hide()
+        self.title='FCaDKey generator'
+        self.lefk=QLineEdit("",self)
+        self.lefk.setGeometry(80, 80, 150, 40)
+        self.setWindowTitle(self.title)
+        self.butt_encrypt.setText('Generate')
+        self.butt_encrypt.clicked.connect(self.get_newk)
+        self.show()
+
+    def get_enc(self):
         self.InfoLabel.setText('')
         self.label.setText('Encrypting...')
 
@@ -53,10 +72,14 @@ class Window(QWidget):
         elif h=='EEFNF':
             self.label.setText('ERROR')
             self.InfoLabel.setText(f'Error during encrypting: encrypting file {filename} does not exist.')
+            self.InfoLabel.adjustSize()
         elif h=='EKFNF':
             self.label.setText('ERROR')
             self.InfoLabel.setText(f'Error during encrypting: key file {keyename} does not exist.')
-        self.__init__()
+            self.InfoLabel.adjustSize()
+    def get_newk(self):
+         filename=self.get("Filename")
+         fcad.irandom_key(filename)
     def get(self,label):
         text, okPressed = QInputDialog.getText(self,self.title+' Dialog',label, QLineEdit.Normal, "")
         if text:

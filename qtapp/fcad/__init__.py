@@ -33,6 +33,7 @@ def idecrypt(filename,key):
     d=decrypt.decrypt(e,key)
     with open(filename,'wb')as f:
         f.write(bytes(d))
-def irandom_key():
-    return keys.new()
+def irandom_key(name):
+    with open(name,'wb')as f:
+            f.write(keys.dump(keys.new(),255))
 
